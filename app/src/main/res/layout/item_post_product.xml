@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:elevation="10dp"
+    app:cardCornerRadius="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="15dp">
+        <TextView
+            android:id="@+id/tv_post_info_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thông tin bài đăng"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:paddingBottom="10dp"/>
+
+        <!-- Title -->
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_post_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Title"
+                android:textSize="20sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <!-- Description -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_post_description"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Description"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Category -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_post_category"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Category"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Image (with default image as placeholder) -->
+        <ImageView
+            android:id="@+id/img_post_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/ic_add_image"
+            android:layout_marginTop="10dp"
+            android:contentDescription="Post Image" />
+
+        <!-- Date -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_post_date"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Post Date"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                android:enabled="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Available Status -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_post_status"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Status"
+                android:textSize="14sp"
+                android:textColor="@android:color/holo_green_dark"
+                android:enabled="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <!-- Edit or Cancel Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <Button
+                android:id="@+id/btn_huy"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Huy"
+                android:textColor="@android:color/holo_red_dark"/>
+            <Button
+                android:id="@+id/btn_select_location"
+                android:layout_width="129dp"
+                android:layout_height="wrap_content"
+                android:text="Chọn vị trí"
+                android:textColor="@android:color/black"
+                />
+
+            <Button
+                android:id="@+id/btn_them"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Thêm"
+                android:textColor="@android:color/holo_blue_dark"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

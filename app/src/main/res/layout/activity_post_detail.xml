@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Image -->
+    <ImageView
+        android:id="@+id/img_post_detail_image"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_image_post"
+        android:contentDescription="Post Image" />
+    <TextView
+        android:id="@+id/tv_post_detail_seller_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Seller Email"
+        android:textSize="26sp"
+        android:layout_marginTop="8dp" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tv_post_detail_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Post Title"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <!-- Description -->
+    <TextView
+        android:id="@+id/tv_post_detail_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:layout_marginTop="8dp" />
+
+    <!-- Category -->
+    <TextView
+        android:id="@+id/tv_post_detail_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Category"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/darker_gray" />
+
+    <!-- Post Date -->
+    <TextView
+        android:id="@+id/tv_post_detail_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/darker_gray" />
+
+    <!-- Status -->
+    <TextView
+        android:id="@+id/tv_post_detail_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/holo_green_dark" />
+</LinearLayout>
