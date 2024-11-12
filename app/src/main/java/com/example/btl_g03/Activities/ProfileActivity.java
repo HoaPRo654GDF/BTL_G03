@@ -219,11 +219,11 @@ public class ProfileActivity extends AppCompatActivity {
                 Log.d("HomeActivity", "Selected Image URI: " + selectedImageUri);
 
                 // Lưu ảnh vào bộ nhớ trong hoặc ngoài (ở đây giả sử bạn lưu vào bộ nhớ trong)
-                String imagePath = saveImageToInternalStorage(selectedImageUri);
+                String profileimageurl = saveImageToInternalStorage(selectedImageUri);
 
                 // Lưu sản phẩm vào SQLite
                 DatabaseHelper dbHelper = new DatabaseHelper(this);
-                dbHelper.addUser(userId, email, phoneNumber, address, fullName, imagePath); // Lưu vào SQLite
+                dbHelper.addUser(userId, email, phoneNumber, address, fullName, profileimageurl); // Lưu vào SQLite
 
                 DocumentReference userRef = firestore.collection("profile").document(userId);
 
@@ -231,7 +231,7 @@ public class ProfileActivity extends AppCompatActivity {
                 userRef.get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
-                        User user = new User(userId, auth.getCurrentUser().getEmail(), password, fullName, phoneNumber, address, imagePath);
+                        User user = new User(userId, auth.getCurrentUser().getEmail(), password, fullName, phoneNumber, address, profileimageurl);
 
                         if (document.exists()) {
                             // Nếu tài liệu đã tồn tại, cập nhật dữ liệu

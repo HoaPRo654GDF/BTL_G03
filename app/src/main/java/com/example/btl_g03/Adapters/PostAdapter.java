@@ -53,10 +53,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         if (imageUrl != null && !imageUrl.isEmpty()) {
             Glide.with(context)
                     .load(imageUrl)  // Tải ảnh từ URL
-                    .placeholder(R.drawable.defaul_image)  // Ảnh mặc định khi chưa tải xong
+                    .placeholder(R.drawable.ic_image_post)  // Ảnh mặc định khi chưa tải xong
                     .into(holder.imgPost);  // Đặt ảnh vào ImageView
         } else {
-            holder.imgPost.setImageResource(R.drawable.defaul_image);  // Nếu không có URL, dùng ảnh mặc định
+            holder.imgPost.setImageResource(R.drawable.ic_image_post);  // Nếu không có URL, dùng ảnh mặc định
         }
 
         // Thiết lập sự kiện click vào item

@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -68,10 +70,12 @@ public class HomeActivity extends AppCompatActivity {
     private Button btn_them, btn_huy;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_PICK = 2;
+    private static final int CAMERA_REQUEST_CODE = 100;
     private  ImageView img_post_image;
     private TextInputEditText edt_post_title, edt_post_description, edt_post_category, edt_post_date,edt_post_status;
     private String userId ;
     private Uri selectedImageUri;
+
     private Calendar calendar;
 
     @Override
@@ -103,6 +107,8 @@ public class HomeActivity extends AppCompatActivity {
         // Load existing user data
         docDulieu();
         calendar = Calendar.getInstance();
+
+
 
         btn_add.setOnClickListener(v -> showAddOrUpdateDialog());
         ImageView imgUserProfile = findViewById(R.id.imgUserProfile); // icon hình người trong layout HomeActivity
@@ -143,6 +149,10 @@ public class HomeActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
+            if (requestCode == CAMERA_REQUEST_CODE ) {
+                // Hiển thị ảnh trong ImageView
+                img_post_image.setImageURI(selectedImageUri);
+            }
             if (requestCode == REQUEST_IMAGE_CAPTURE && data != null && data.getExtras() != null) {
                 Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
                 img_post_image.setImageBitmap(imageBitmap);
@@ -215,18 +225,56 @@ public class HomeActivity extends AppCompatActivity {
 
         // "Add" button logic
         btn_them.setOnClickListener(v1 -> ghiDulieu(alertDialog));
-        img_post_image.setOnClickListener(v -> showImageOptionsDialog());
+
+        edt_post_date.setOnClickListener(v -> showDatePickerDialog());
+
+        img_post_image.setOnClickListener(v -> {
+            requestPermissions();
+            showImageOptionsDialog();
+        });
         // "Cancel" button logic
         btn_huy.setOnClickListener(v1 -> alertDialog.dismiss());
 
         alertDialog.show();
     }
-    private void openCamera() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//    private void openCamera() {
+//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+//            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//        }
+//    }
+private void openCamera() {
+    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+        File photoFile = null;
+        try {
+            // Tạo file để lưu ảnh
+            photoFile = createImageFile();
+        } catch (IOException ex) {
+            // Xử lý lỗi khi tạo file
+            ex.printStackTrace();
+        }
+
+        if (photoFile != null) {
+            selectedImageUri = FileProvider.getUriForFile(this, "com.example.yourapp.fileprovider", photoFile);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, selectedImageUri);
+            startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
         }
     }
+}
+    private File createImageFile() throws IOException {
+        // Đặt tên cho file ảnh với timestamp để tránh trùng lặp
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        // Tạo file ảnh
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        // Lưu đường dẫn file để sử dụng sau
+        return image;
+    }
+
 
     private void openGallery() {
         Intent pickPhotoIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -323,6 +371,7 @@ public class HomeActivity extends AppCompatActivity {
     // Phương thức lưu ảnh vào bộ nhớ trong (hoặc ngoài)
     private String saveImageToInternalStorage(Uri imageUri) {
         try {
+
             // Tạo đường dẫn lưu ảnh vào bộ nhớ trong
             File storageDir = new File(getFilesDir(), "images");
             if (!storageDir.exists()) {

@@ -73,7 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_PRODUCT, null, values); // Chèn vào bảng
         db.close();
     }
-    public void addUser(String userId, String email, String phoneNumber, String address, String fullName, String imagePath) {
+    public void addUser(String userId, String email, String phoneNumber, String address, String fullName, String profileimageurl) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_USER_ID, userId);
@@ -81,7 +81,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_PHONE_NUMBER, phoneNumber);
         values.put(COLUMN_ADDRESS, address);
         values.put(COLUMN_FULL_NAME, fullName);
-        values.put(COLUMN_PROFILE_IMAGE_URL, imagePath);
+        values.put(COLUMN_PROFILE_IMAGE_URL, profileimageurl);
 
         db.insert(TABLE_USER, null, values); // Chèn vào bảng
         db.close();

@@ -87,7 +87,7 @@ public class PostDetailActivity extends AppCompatActivity {
                                     .load(imageUrl)
                                     .into(imgPost);
                         } else {
-                            imgPost.setImageResource(R.drawable.defaul_image);  // Đặt hình ảnh mặc định nếu không có URL ảnh
+                            imgPost.setImageResource(R.drawable.ic_image_post);  // Đặt hình ảnh mặc định nếu không có URL ảnh
                         }
                     } else {
                         Toast.makeText(this, "Error: Post object is null", Toast.LENGTH_SHORT).show();
