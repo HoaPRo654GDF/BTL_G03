@@ -24,13 +24,14 @@ public class User {
 //        this.fullName = fullName;
 //        this.profileImageUrl = profileImageUrl;
 //    }
-    public User(String userId,String email,String passwordHash ,String fullName, String phoneNumber, String address) {
+    public User(String userId,String email,String passwordHash ,String fullName, String phoneNumber, String address, String profileImageUrl) {
         this.userId = userId;
         this.email = email;
         this.passwordHash = passwordHash;
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.profileImageUrl = profileImageUrl;
 
 
     }

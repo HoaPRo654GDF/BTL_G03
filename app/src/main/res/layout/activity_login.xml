@@ -11,8 +11,10 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/logo_default" />
+        android:layout_height="200dp"
+        android:layout_marginBottom="20dp"
+        app:srcCompat="@drawable/logo"
+        android:scaleType="centerInside" />
 
 
     <TextView
@@ -20,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
-        android:text="Login"
+        android:text="Đăng nhập"
         android:textSize="30sp"
         android:textStyle="bold" />
 
@@ -61,14 +63,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Login" />
+            android:text="Đăng nhập" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:text="Forget Password ?" />
+            android:text="Quên mật khẩu ?" />
 
         <TextView
             android:id="@+id/tv_dangky"
@@ -76,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:text="Register" />
+            android:text="Đăng kí" />
     </LinearLayout>
 
 

@@ -6,62 +6,161 @@
     android:padding="16dp">
 
     <!-- Image -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="5dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_logout"
+            android:layout_width="34dp"
+            android:layout_height="35dp"
+            android:layout_gravity="start|top"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/nen_da_cam"
+            android:drawableStart="@drawable/ic_back"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </LinearLayout>
     <ImageView
         android:id="@+id/img_post_detail_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:src="@drawable/ic_image_post"
         android:contentDescription="Post Image" />
-    <TextView
-        android:id="@+id/tv_post_detail_seller_email"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Seller Email"
-        android:textSize="26sp"
-        android:layout_marginTop="8dp" />
-
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email người đăng:   "
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp" />
+            <TextView
+                android:id="@+id/tv_post_detail_seller_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seller Email"
+                android:textSize="18sp"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
     <!-- Title -->
-    <TextView
-        android:id="@+id/tv_post_detail_title"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Post Title"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp" />
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tiêu đề bài đăng:  "
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_post_detail_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Post Title"
+            android:textSize="18sp"
+            />
+    </LinearLayout>
     <!-- Description -->
-    <TextView
-        android:id="@+id/tv_post_detail_description"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Description"
-        android:layout_marginTop="8dp" />
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mô tả:  "
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_post_detail_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description" />
+    </LinearLayout>
 
     <!-- Category -->
-    <TextView
-        android:id="@+id/tv_post_detail_category"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Category"
-        android:layout_marginTop="8dp"
-        android:textColor="@android:color/darker_gray" />
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Danh mục:  "
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_post_detail_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textColor="@android:color/darker_gray" />
+    </LinearLayout>
 
     <!-- Post Date -->
-    <TextView
-        android:id="@+id/tv_post_detail_date"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Date"
-        android:layout_marginTop="8dp"
-        android:textColor="@android:color/darker_gray" />
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ngày đăng:  "
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_post_detail_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textColor="@android:color/darker_gray" />
+    </LinearLayout>
 
     <!-- Status -->
-    <TextView
-        android:id="@+id/tv_post_detail_status"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Status"
-        android:layout_marginTop="8dp"
-        android:textColor="@android:color/holo_green_dark" />
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_post_detail_status_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trạng thái:"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_post_detail_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status"
+            android:textColor="@android:color/holo_green_dark" />
+    </LinearLayout>
 </LinearLayout>
