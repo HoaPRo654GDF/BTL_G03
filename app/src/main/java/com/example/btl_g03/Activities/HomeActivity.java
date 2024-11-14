@@ -57,8 +57,9 @@ public class HomeActivity extends AppCompatActivity {
 
             if (menuItem.getItemId() == R.id.action_home) {
                 selectedFragment = new HomeFragment();
+            }else if (menuItem.getItemId() == R.id.action_location) {
+                selectedFragment = new MapFragment();
             }
-
 
             if (selectedFragment != null) {
                 loadFragment(selectedFragment);

@@ -24,7 +24,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(String postId, String userId, String title, String description, String category, String imageUrl, Date postDate, boolean isAvailable,PostType postType) {
+    public Post(String postId, String userId, String title, String description, String category, String imageUrl, Date postDate, boolean isAvailable,PostType postType,double latitude, double longitude) {
         this.postId = postId;
         this.userId = userId;
         this.title = title;
@@ -34,6 +34,8 @@ public class Post {
         this.postDate = postDate;
         this.isAvailable = isAvailable;
         this.postType = postType;
+        this.latitude = latitude;
+        this.longitude = longitude;
 
 
     }
@@ -107,6 +109,22 @@ public class Post {
 
     public void setPostType(PostType postType) {
         this.postType = postType;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }
 

@@ -10,9 +10,12 @@ import androidx.fragment.app.Fragment;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -42,6 +45,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -56,8 +61,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 public class HomeFragment extends Fragment {
@@ -125,15 +132,16 @@ public class HomeFragment extends Fragment {
         }
     }
     private boolean checkPermissions() {
+        int locationPermission = ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
         int cameraPermission = ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA);
         int storagePermission = ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
-        return cameraPermission == PackageManager.PERMISSION_GRANTED && storagePermission == PackageManager.PERMISSION_GRANTED;
+        return locationPermission == PackageManager.PERMISSION_GRANTED && cameraPermission == PackageManager.PERMISSION_GRANTED && storagePermission == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermissions() {
         if (!checkPermissions()) {
             ActivityCompat.requestPermissions(requireActivity(),
-                    new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
         }
     }
 
@@ -318,6 +326,25 @@ public class HomeFragment extends Fragment {
 
         // Kiểm tra các trường thông tin có rỗng không
         if (!title.isEmpty() && !category.isEmpty() && date != null && !description.isEmpty() ) {
+            double latitude = 0.0;
+            double longitude = 0.0;
+
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+                if (locationManager != null) {
+                    Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (location != null) {
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                    }
+                }
+            } else {
+                requestPermissions();
+            }
+            if (latitude == 0.0 && longitude == 0.0) {
+                Toast.makeText(getContext(), "Không thể lấy vị trí, vui lòng kiểm tra lại GPS", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (selectedImageUri != null) {
                 Log.d("HomeActivity", "Selected Image URI: " + selectedImageUri);
 
@@ -333,12 +360,15 @@ public class HomeFragment extends Fragment {
                 String postId = postRef.getId(); // Lấy ID tự động của tài liệu
 
                 // Tạo đối tượng Post và lưu vào Firestore
-                Post post = new Post(postId, userId, title, description, category, imagePath, finalDate, isAvailable, postType);
+                Post post = new Post(postId, userId, title, description, category, imagePath, finalDate, isAvailable, postType,latitude, longitude);
+                saveLocationAndTitleToRealtimeDatabase(postId, title, latitude, longitude);
                 postRef.set(post)
                         .addOnSuccessListener(aVoid -> {
                             alertDialog.dismiss();
                             docDulieu();
                             Toast.makeText(getContext(), "Thêm sản phẩm thành công", Toast.LENGTH_SHORT).show();
+
+
                         })
                         .addOnFailureListener(e -> {
                             Toast.makeText(getContext(), "Lỗi khi thêm dữ liệu", Toast.LENGTH_SHORT).show();
@@ -351,6 +381,23 @@ public class HomeFragment extends Fragment {
             Toast.makeText(getContext(), "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
         }
     }
+    // Lưu title, vị trí bài đăng vào Firebase Realtime Database
+    private void saveLocationAndTitleToRealtimeDatabase(String postId, String title, double latitude, double longitude) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference postRef = database.getReference("posts/" + postId);
+
+        // Tạo một đối tượng chứa thông tin title và vị trí
+        Map<String, Object> postData = new HashMap<>();
+        postData.put("title", title);
+        postData.put("latitude", latitude);
+        postData.put("longitude", longitude);
+
+        // Lưu dữ liệu vào Firebase Realtime Database
+        postRef.setValue(postData)
+                .addOnSuccessListener(aVoid -> Log.d("HomeActivity", "Title và vị trí đã được lưu vào Realtime Database"))
+                .addOnFailureListener(e -> Log.d("HomeActivity", "Lỗi khi lưu Title và Vị trí vào Realtime Database", e));
+    }
+
 
     private void docDulieu() {
         firestore.collection("product")
