@@ -24,7 +24,7 @@ public class Post {
     public Post() {
     }
 
-    public Post(String postId, String userId, String title, String description, String category, String imageUrl, Date postDate, boolean isAvailable) {
+    public Post(String postId, String userId, String title, String description, String category, String imageUrl, Date postDate, boolean isAvailable,PostType postType) {
         this.postId = postId;
         this.userId = userId;
         this.title = title;
@@ -33,6 +33,8 @@ public class Post {
         this.imageUrl = imageUrl;
         this.postDate = postDate;
         this.isAvailable = isAvailable;
+        this.postType = postType;
+
 
     }
     public String getPostId() {

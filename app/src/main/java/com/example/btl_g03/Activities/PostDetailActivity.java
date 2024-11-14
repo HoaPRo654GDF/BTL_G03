@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class PostDetailActivity extends AppCompatActivity {
-    private TextView tvTitle, tvDescription, tvCategory, tvPostDate, tvStatus,tvSellerEmail;
+    private TextView tvTitle, tvDescription, tvCategory, tvPostDate, tvStatus,tvSellerEmail,tvPostType;
     private ImageView imgPost;
 
     @Override
@@ -38,6 +38,7 @@ public class PostDetailActivity extends AppCompatActivity {
         tvPostDate = findViewById(R.id.tv_post_detail_date);
         tvStatus = findViewById(R.id.tv_post_detail_status);
         tvSellerEmail = findViewById(R.id.tv_post_detail_seller_email);
+        tvPostType = findViewById(R.id.tv_post_detail_type);
         imgPost = findViewById(R.id.img_post_detail_image);
 
         findViewById(R.id.btn_logout).setOnClickListener(view -> {
@@ -75,7 +76,8 @@ public class PostDetailActivity extends AppCompatActivity {
                         tvDescription.setText(post.getDescription());
                         tvCategory.setText(post.getCategory());
                         tvPostDate.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(post.getPostDate()));
-                        tvStatus.setText(post.isAvailable() ? "Available" : "Not Available");
+                        tvStatus.setText(post.isAvailable() ? "Còn hàng" : "Hết hàng");
+                        tvPostType.setText(post.getPostType().toString());
                         loadSellerEmail(post.getUserId());
 
                         // Sử dụng Glide để tải ảnh từ URL nếu có

@@ -21,8 +21,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -34,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.btl_g03.Adapters.PostAdapter;
 import com.example.btl_g03.DatabaseHelper;
 import com.example.btl_g03.Models.Post;
+import com.example.btl_g03.Models.PostType;
 import com.example.btl_g03.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -74,6 +77,7 @@ public class HomeFragment extends Fragment {
     private Calendar calendar;
     private String userId ;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
@@ -93,6 +97,8 @@ public class HomeFragment extends Fragment {
         postlist = new ArrayList<>();
         postAdapter = new PostAdapter(postlist, requireContext());
         recyclerView.setAdapter(postAdapter);
+
+
 
         docDulieu();
 
@@ -206,6 +212,19 @@ public class HomeFragment extends Fragment {
         builder.setView(dialogView);
         AlertDialog alertDialog = builder.create();
 
+
+        Spinner postTypeSpinner = dialogView.findViewById(R.id.spinner_post_type);
+
+// Tạo ArrayAdapter từ tài nguyên strings.xml
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.post_types, android.R.layout.simple_spinner_item);
+
+// Thiết lập layout cho item dropdown
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+// Gán ArrayAdapter cho Spinner
+        postTypeSpinner.setAdapter(adapter);
+
         // Tìm các view trong dialog
         btn_them = dialogView.findViewById(R.id.btn_them);
         btn_huy = dialogView.findViewById(R.id.btn_huy);
@@ -213,11 +232,11 @@ public class HomeFragment extends Fragment {
         edt_post_category = dialogView.findViewById(R.id.edt_post_category);
         edt_post_date = dialogView.findViewById(R.id.edt_post_date);
         edt_post_description = dialogView.findViewById(R.id.edt_post_description);
-        edt_post_status = dialogView.findViewById(R.id.edt_post_status);
+//        edt_post_status = dialogView.findViewById(R.id.edt_post_status);
         img_post_image = dialogView.findViewById(R.id.img_post_image);
 
         // Logic cho nút thêm
-        btn_them.setOnClickListener(v1 -> ghiDulieu(alertDialog));
+        btn_them.setOnClickListener(v1 -> ghiDulieu(dialogView,alertDialog));
 
         edt_post_date.setOnClickListener(v -> showDatePickerDialog());
 
@@ -263,20 +282,18 @@ public class HomeFragment extends Fragment {
             return null;
         }
     }
-    private void ghiDulieu(AlertDialog alertDialog) {
+    private void ghiDulieu(View dialogView, AlertDialog alertDialog) {
         // Lưu dữ liệu như trước, thay vì gọi HomeActivity, sử dụng getContext() cho các thao tác cần thiết.
         String title = edt_post_title.getText().toString();
         String category = edt_post_category.getText().toString();
         String dateString = edt_post_date.getText().toString();
         String description = edt_post_description.getText().toString();
-        String status = edt_post_status.getText().toString();
+//        String status = edt_post_status.getText().toString();
 
-        Log.d("HomeActivity", "Title: " + title);
-        Log.d("HomeActivity", "Category: " + category);
-        Log.d("HomeActivity", "Date: " + dateString);
-        Log.d("HomeActivity", "Description: " + description);
-        Log.d("HomeActivity", "Status: " + status);
+        Spinner postTypeSpinner = dialogView.findViewById(R.id.spinner_post_type);
+        String postTypeString  = postTypeSpinner.getSelectedItem().toString();
 
+        PostType postType = convertStringToPostType(postTypeString);
         boolean isAvailable = true;
 
         // Định dạng ngày mà bạn mong muốn (dd/MM/yyyy)
@@ -300,7 +317,7 @@ public class HomeFragment extends Fragment {
         }
 
         // Kiểm tra các trường thông tin có rỗng không
-        if (!title.isEmpty() && !category.isEmpty() && date != null && !description.isEmpty() && !status.isEmpty()) {
+        if (!title.isEmpty() && !category.isEmpty() && date != null && !description.isEmpty() ) {
             if (selectedImageUri != null) {
                 Log.d("HomeActivity", "Selected Image URI: " + selectedImageUri);
 
@@ -316,7 +333,7 @@ public class HomeFragment extends Fragment {
                 String postId = postRef.getId(); // Lấy ID tự động của tài liệu
 
                 // Tạo đối tượng Post và lưu vào Firestore
-                Post post = new Post(postId, userId, title, description, category, imagePath, finalDate, isAvailable);
+                Post post = new Post(postId, userId, title, description, category, imagePath, finalDate, isAvailable, postType);
                 postRef.set(post)
                         .addOnSuccessListener(aVoid -> {
                             alertDialog.dismiss();
@@ -351,11 +368,16 @@ public class HomeFragment extends Fragment {
                     }
                 });
     }
-
-
-
-
-    // Các phương thức khác như docDulieu(), showAddOrUpdateDialog(), requestPermissions(), openCamera(), openGallery() sẽ được chuyển vào đây.
+    private PostType convertStringToPostType(String postTypeString) {
+        switch (postTypeString) {
+            case "Chia sẻ nhu yếu phẩm":
+                return PostType.SHARE;
+            case "Xin nhận nhu yếu phẩm":
+                return PostType.REQUEST;
+            default:
+                throw new IllegalArgumentException("Không xác định loại bài đăng: " + postTypeString);
+        }
+    }
 }
 
 

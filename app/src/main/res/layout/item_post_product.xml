@@ -23,8 +23,20 @@
             android:layout_gravity="center"
             android:paddingBottom="10dp"/>
 
-        <!-- Title -->
 
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <Spinner
+                android:id="@+id/spinner_post_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/post_types"/>
+        </com.google.android.material.textfield.TextInputLayout>
+        <!-- Title -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,21 +105,21 @@
                 android:enabled="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Available Status -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
+<!--        &lt;!&ndash; Available Status &ndash;&gt;-->
+<!--        <com.google.android.material.textfield.TextInputLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="5dp">-->
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edt_post_status"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Status"
-                android:textSize="14sp"
-                android:textColor="@android:color/holo_green_dark"
-                android:enabled="true" />
-        </com.google.android.material.textfield.TextInputLayout>
+<!--            <com.google.android.material.textfield.TextInputEditText-->
+<!--                android:id="@+id/edt_post_status"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:hint="Status"-->
+<!--                android:textSize="14sp"-->
+<!--                android:textColor="@android:color/holo_green_dark"-->
+<!--                android:enabled="true" />-->
+<!--        </com.google.android.material.textfield.TextInputLayout>-->
 
 
         <!-- Edit or Cancel Buttons -->
