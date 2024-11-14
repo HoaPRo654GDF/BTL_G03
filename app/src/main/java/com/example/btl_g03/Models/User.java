@@ -15,15 +15,6 @@ public class User {
     public User() {
     }
 
-//    public User(String userId, String email, String password, String phoneNumber, String address, String fullName, String profileImageUrl) {
-//        this.userId = userId;
-//        this.email = email;
-//        this.password = password;
-//        this.phoneNumber = phoneNumber;
-//        this.address = address;
-//        this.fullName = fullName;
-//        this.profileImageUrl = profileImageUrl;
-//    }
     public User(String userId,String email,String passwordHash ,String fullName, String phoneNumber, String address, String profileImageUrl) {
         this.userId = userId;
         this.email = email;

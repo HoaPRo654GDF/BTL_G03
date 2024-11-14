@@ -3,12 +3,15 @@ package com.example.btl_g03.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.core.view.WindowCompat;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.example.btl_g03.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,6 +36,13 @@ public class RegisterActivity extends AppCompatActivity {
         edt_pas = findViewById(R.id.edt_pass_dk);
         edt_repas = findViewById(R.id.edt_repass_dk);
         btn_regist = findViewById(R.id.btn_register);
+
+        ImageView imgUserProfile = findViewById(R.id.imageView);
+
+        Glide.with(this)
+                .load(R.drawable.logo) // Hoặc URL của ảnh
+                .transform(new CircleCrop()) // Cắt ảnh thành hình tròn
+                .into(imgUserProfile);
         btn_regist.setOnClickListener(v -> {
             String email = edt_emai.getText().toString();
             String pass = edt_pas.getText().toString();

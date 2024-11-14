@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,6 +13,8 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.example.btl_g03.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseAuth auth;
     Button btn_login;
     TextView tv_dangk;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,12 @@ public class LoginActivity extends AppCompatActivity {
         edt_emai.setText(intent.getStringExtra("user_email"));
         edt_pas.setText(intent.getStringExtra("password"));
 
+        ImageView imgUserProfile = findViewById(R.id.imageView);
+
+        Glide.with(this)
+                .load(R.drawable.logo) // Hoặc URL của ảnh
+                .transform(new CircleCrop()) // Cắt ảnh thành hình tròn
+                .into(imgUserProfile);
         btn_login.setOnClickListener(v -> {
             String email = edt_emai.getText().toString();
             String pass = edt_pas.getText().toString();

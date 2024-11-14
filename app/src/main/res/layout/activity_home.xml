@@ -8,49 +8,61 @@
     android:gravity="center"
     tools:context=".Activities.HomeActivity">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnlogout"
-        android:layout_width="34dp"
-        android:layout_height="35dp"
-        android:layout_gravity="start|top"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/nen_da_cam"
-        android:drawableStart="@drawable/ic_back"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        />
-    <ImageView
-        android:id="@+id/imgUserProfile"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/ic_user"
-        android:layout_gravity="end|top"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp" />
-    <LinearLayout
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_gravity="top"
+        android:background="@color/purple_200">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnlogout"
+            android:layout_width="34dp"
+            android:layout_height="35dp"
+            android:layout_gravity="start|top"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/nen_da_cam"
+            android:drawableStart="@drawable/ic_back"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="18dp"
+            android:text="CỘNG ĐỒNG CHIA SẺ"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+
+        <ImageView
+            android:id="@+id/imgUserProfile"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="end|top"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/round_image"
+            android:src="@drawable/ic_user" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginTop="64dp"> <!-- Tạo khoảng trống phía trên để tránh icon -->
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="56dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="10dp"
-            android:id="@+id/recyclerView" />
-
-
-    </LinearLayout>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_add"
-        android:layout_width="wrap_content"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="30dp"
-        android:src="@drawable/ic_add" />
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        app:itemIconTint="@color/purple_blue"
+        app:menu="@menu/menu_botton_nav" />
 
 </FrameLayout>

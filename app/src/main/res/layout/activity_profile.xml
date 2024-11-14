@@ -43,6 +43,7 @@
             android:layout_height="120dp"
             android:layout_gravity="center"
             android:src="@drawable/defaul_image"
+            android:background="@drawable/round_image"
             />
         <TextView
             android:id="@+id/txt_email"

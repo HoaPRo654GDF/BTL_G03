@@ -2,6 +2,7 @@ package com.example.btl_g03;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -86,4 +87,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_USER, null, values); // Chèn vào bảng
         db.close();
     }
+
+
 }

@@ -1,10 +1,12 @@
 package com.example.btl_g03.Activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Button;
@@ -16,8 +18,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.example.btl_g03.DatabaseHelper;
 import com.example.btl_g03.Models.User;
 import com.example.btl_g03.R;
@@ -32,6 +38,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -42,10 +50,11 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_PICK = 2;
     private Uri selectedImageUri;
-
+    private static final int CAMERA_REQUEST_CODE = 100;
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
     private String userId, email, password;
+    private  String profileImageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +80,10 @@ public class ProfileActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btn_save);
         imgProfile = findViewById(R.id.img_profile);
 
-        imgProfile.setOnClickListener(v -> showImageOptionsDialog());
+        imgProfile.setOnClickListener(v ->{
+                requestPermissions();
+                showImageOptionsDialog();
+        });
 
         // Tải dữ liệu người dùng
         loadUserData();
@@ -85,10 +97,15 @@ public class ProfileActivity extends AppCompatActivity {
             finish();  // Đóng Activity hiện tại nếu cần
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
+            if (requestCode == CAMERA_REQUEST_CODE ) {
+
+                imgProfile.setImageURI(selectedImageUri);// Hiển thị ảnh từ Camera
+            }
             if (requestCode == REQUEST_IMAGE_CAPTURE && data != null && data.getExtras() != null) {
                 Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
                 imgProfile.setImageBitmap(imageBitmap);
@@ -99,23 +116,52 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults); // Call super method
 
-        if (requestCode == 100 && grantResults.length > 0) {
-            boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-            boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+    private boolean checkPermissions() {
 
-            if (!cameraAccepted || !storageAccepted) {
-                Toast.makeText(this, "Camera and storage permissions are required", Toast.LENGTH_SHORT).show();
-            }
+        int cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        int storagePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        return cameraPermission == PackageManager.PERMISSION_GRANTED && storagePermission == PackageManager.PERMISSION_GRANTED;
+    }
+
+    // Hàm yêu cầu cấp quyền camera và bộ nhớ
+    private void requestPermissions() {
+        if (!checkPermissions()) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, 100);
         }
     }
+    private File createImageFile() throws IOException {
+        // Đặt tên cho file ảnh với timestamp để tránh trùng lặp
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        // Tạo file ảnh
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
+        // Lưu đường dẫn file để sử dụng sau
+        return image;
+    }
+
     private void openCamera() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                // Tạo file để lưu ảnh
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Xử lý lỗi khi tạo file
+                ex.printStackTrace();
+            }
+
+            if (photoFile != null) {
+                selectedImageUri = FileProvider.getUriForFile(this, "com.example.btl_g03.fileprovider", photoFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, selectedImageUri);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+            }
         }
     }
 
@@ -193,7 +239,8 @@ public class ProfileActivity extends AppCompatActivity {
                             edtAddress.setText(address);
                             if (imgUrl != null && !imgUrl.isEmpty()) {
                                 Glide.with(ProfileActivity.this)
-                                        .load(imgUrl) // URL ảnh
+                                        .load(imgUrl)// URL ảnh
+                                        .transform(new CircleCrop())
                                         .into(imgProfile); // profileImageView là ImageView bạn muốn hiển thị ảnh
                             } else {
                                 // Nếu không có ảnh, bạn có thể set một ảnh mặc định hoặc không làm gì cả
@@ -209,61 +256,141 @@ public class ProfileActivity extends AppCompatActivity {
                 });
     }
 
+
+//    private void saveUserData() {
+//        String fullName = edtFullName.getText().toString();
+//        String phoneNumber = edtPhoneNumber.getText().toString();
+//        String address = edtAddress.getText().toString();
+//
+//        if (!fullName.isEmpty() && !phoneNumber.isEmpty() && !address.isEmpty()) {
+//            if (selectedImageUri != null) {
+//                Log.d("HomeActivity", "Selected Image URI: " + selectedImageUri);
+//
+//                // Lưu ảnh vào bộ nhớ trong hoặc ngoài (ở đây giả sử bạn lưu vào bộ nhớ trong)
+//                String profileimageurl = saveImageToInternalStorage(selectedImageUri);
+//
+//                // Lưu sản phẩm vào SQLite
+//                DatabaseHelper dbHelper = new DatabaseHelper(this);
+//                dbHelper.addUser(userId, email, phoneNumber, address, fullName, profileimageurl); // Lưu vào SQLite
+//
+//                DocumentReference userRef = firestore.collection("profile").document(userId);
+//
+//                // Kiểm tra tài liệu người dùng có tồn tại hay không
+//                userRef.get().addOnCompleteListener(task -> {
+//                    if (task.isSuccessful()) {
+//                        DocumentSnapshot document = task.getResult();
+//                        User user = new User(userId, auth.getCurrentUser().getEmail(), password, fullName, phoneNumber, address, profileimageurl);
+//
+//                        if (document.exists()) {
+//                            // Nếu tài liệu đã tồn tại, cập nhật dữ liệu
+//                            userRef.set(user) // .set() sẽ ghi đè tài liệu, hoặc tạo mới nếu không có
+//                                    .addOnSuccessListener(aVoid -> {
+//                                        Toast.makeText(ProfileActivity.this, "Cập nhật dữ liệu thành công", Toast.LENGTH_SHORT).show();
+//                                    })
+//                                    .addOnFailureListener(e -> {
+//                                        Toast.makeText(ProfileActivity.this, "Lỗi khi cập nhật dữ liệu", Toast.LENGTH_SHORT).show();
+//                                        Log.d("ProfileActivity", "Error updating document", e);
+//                                    });
+//                        } else {
+//                            // Nếu tài liệu chưa tồn tại, tạo mới tài liệu
+//                            userRef.set(user)
+//                                    .addOnSuccessListener(aVoid -> {
+//                                        Toast.makeText(ProfileActivity.this, "Lưu thông tin thành công", Toast.LENGTH_SHORT).show();
+//                                    })
+//                                    .addOnFailureListener(e -> {
+//                                        Toast.makeText(ProfileActivity.this, "Lỗi khi lưu dữ liệu", Toast.LENGTH_SHORT).show();
+//                                        Log.d("ProfileActivity", "Error adding document", e);
+//                                    });
+//                        }
+//                    } else {
+//                        Toast.makeText(ProfileActivity.this, "Vui lòng chọn ảnh", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            } else {
+//                Toast.makeText(ProfileActivity.this, "Vui lòng chọn ảnh", Toast.LENGTH_SHORT).show();
+//            }
+//        } else {
+//            Toast.makeText(ProfileActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
     private void saveUserData() {
         String fullName = edtFullName.getText().toString();
         String phoneNumber = edtPhoneNumber.getText().toString();
         String address = edtAddress.getText().toString();
 
         if (!fullName.isEmpty() && !phoneNumber.isEmpty() && !address.isEmpty()) {
+            // Kiểm tra nếu người dùng chọn ảnh
+
+
+            // Nếu có ảnh mới được chọn
             if (selectedImageUri != null) {
                 Log.d("HomeActivity", "Selected Image URI: " + selectedImageUri);
-
-                // Lưu ảnh vào bộ nhớ trong hoặc ngoài (ở đây giả sử bạn lưu vào bộ nhớ trong)
-                String profileimageurl = saveImageToInternalStorage(selectedImageUri);
-
-                // Lưu sản phẩm vào SQLite
-                DatabaseHelper dbHelper = new DatabaseHelper(this);
-                dbHelper.addUser(userId, email, phoneNumber, address, fullName, profileimageurl); // Lưu vào SQLite
-
-                DocumentReference userRef = firestore.collection("profile").document(userId);
-
-                // Kiểm tra tài liệu người dùng có tồn tại hay không
-                userRef.get().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        User user = new User(userId, auth.getCurrentUser().getEmail(), password, fullName, phoneNumber, address, profileimageurl);
-
-                        if (document.exists()) {
-                            // Nếu tài liệu đã tồn tại, cập nhật dữ liệu
-                            userRef.set(user) // .set() sẽ ghi đè tài liệu, hoặc tạo mới nếu không có
-                                    .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(ProfileActivity.this, "Cập nhật dữ liệu thành công", Toast.LENGTH_SHORT).show();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(ProfileActivity.this, "Lỗi khi cập nhật dữ liệu", Toast.LENGTH_SHORT).show();
-                                        Log.d("ProfileActivity", "Error updating document", e);
-                                    });
-                        } else {
-                            // Nếu tài liệu chưa tồn tại, tạo mới tài liệu
-                            userRef.set(user)
-                                    .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(ProfileActivity.this, "Lưu thông tin thành công", Toast.LENGTH_SHORT).show();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(ProfileActivity.this, "Lỗi khi lưu dữ liệu", Toast.LENGTH_SHORT).show();
-                                        Log.d("ProfileActivity", "Error adding document", e);
-                                    });
-                        }
-                    } else {
-                        Toast.makeText(ProfileActivity.this, "Vui lòng chọn ảnh", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                profileImageUrl = saveImageToInternalStorage(selectedImageUri);
             } else {
-                Toast.makeText(ProfileActivity.this, "Vui lòng chọn ảnh", Toast.LENGTH_SHORT).show();
+                // Nếu không có ảnh mới, giữ lại ảnh cũ hoặc không thay đổi ảnh
+                profileImageUrl = getCurrentProfileImageUrl(); // Bạn cần tạo hàm này để lấy ảnh cũ từ Firestore
             }
+
+            // Lưu thông tin vào SQLite
+            DatabaseHelper dbHelper = new DatabaseHelper(this);
+            dbHelper.addUser(userId, email, phoneNumber, address, fullName, profileImageUrl);
+
+            DocumentReference userRef = firestore.collection("profile").document(userId);
+
+            // Kiểm tra tài liệu người dùng có tồn tại hay không
+            userRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    User user = new User(userId, auth.getCurrentUser().getEmail(), password, fullName, phoneNumber, address, profileImageUrl);
+
+                    if (document.exists()) {
+                        // Nếu tài liệu đã tồn tại, cập nhật dữ liệu
+                        userRef.set(user) // .set() sẽ ghi đè tài liệu, hoặc tạo mới nếu không có
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(ProfileActivity.this, "Cập nhật dữ liệu thành công", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(ProfileActivity.this, "Lỗi khi cập nhật dữ liệu", Toast.LENGTH_SHORT).show();
+                                    Log.d("ProfileActivity", "Error updating document", e);
+                                });
+                    } else {
+                        // Nếu tài liệu chưa tồn tại, tạo mới tài liệu
+                        userRef.set(user)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(ProfileActivity.this, "Lưu thông tin thành công", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(ProfileActivity.this, "Lỗi khi lưu dữ liệu", Toast.LENGTH_SHORT).show();
+                                    Log.d("ProfileActivity", "Error adding document", e);
+                                });
+                    }
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Vui lòng chọn ảnh", Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
             Toast.makeText(ProfileActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private String getCurrentProfileImageUrl() {
+        // Tạo tham chiếu đến Firestore để lấy ảnh cũ
+        DocumentReference userRef = firestore.collection("profile").document(userId);
+        final String[] profileImageUrl = new String[1];
+
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    profileImageUrl[0] = document.getString("profileImageUrl");
+                }
+            } else {
+                Log.d("ProfileActivity", "Error getting document", task.getException());
+            }
+        });
+
+        return profileImageUrl[0];
     }
 
 }

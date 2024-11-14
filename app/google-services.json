@@ -1,14 +1,14 @@
 {
   "project_info": {
-    "project_number": "524795740973",
-    "firebase_url": "https://test-8acba-default-rtdb.firebaseio.com",
-    "project_id": "test-8acba",
-    "storage_bucket": "test-8acba.firebasestorage.app"
+    "project_number": "540009232481",
+    "firebase_url": "https://btlandr-1ff53-default-rtdb.firebaseio.com",
+    "project_id": "btlandr-1ff53",
+    "storage_bucket": "btlandr-1ff53.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:524795740973:android:bc17e6951356309e8089a4",
+        "mobilesdk_app_id": "1:540009232481:android:cbfd9d0dce803d941ad220",
         "android_client_info": {
           "package_name": "com.example.btl_g03"
         }
@@ -16,26 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCfzVD7xZPT8fYAF_YeD5E3UOZQ-w4nv84"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:524795740973:android:67e2c4d07c7b47f28089a4",
-        "android_client_info": {
-          "package_name": "com.example.test"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCfzVD7xZPT8fYAF_YeD5E3UOZQ-w4nv84"
+          "current_key": "AIzaSyDLF0kfccdVBvyw8RDkTFF5Kvmd-aW3VFk"
         }
       ],
       "services": {

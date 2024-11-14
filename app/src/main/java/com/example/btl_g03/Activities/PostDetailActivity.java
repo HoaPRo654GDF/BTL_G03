@@ -16,14 +16,12 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import com.bumptech.glide.Glide;  // Đảm bảo bạn đã thêm Glide vào dependencies của dự án.
+import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class PostDetailActivity extends AppCompatActivity {
-
-
     private TextView tvTitle, tvDescription, tvCategory, tvPostDate, tvStatus,tvSellerEmail;
     private ImageView imgPost;
 
