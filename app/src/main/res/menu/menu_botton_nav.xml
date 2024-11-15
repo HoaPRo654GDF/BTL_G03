@@ -12,8 +12,8 @@
         android:title="@string/action_location"
         android:icon="@drawable/ic_location"/>
 
-    <item android:id="@+id/action_progress"
-        android:title="@string/action_progress"
+    <item android:id="@+id/action_Message"
+        android:title="@string/action_Message"
         android:icon="@drawable/ic_progress"/>
 
     <item android:id="@+id/action_more"

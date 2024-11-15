@@ -3,7 +3,7 @@
     <string name="action_home">Home</string>
     <string name="action_leaderboard">LeaderBoard</string>
     <string name="action_location">Location</string>
-    <string name="action_progress">Progress</string>
+    <string name="action_Message">Message</string>
     <string name="action_more">More</string>
     <string-array name="post_types">
         <item>Chia sẻ nhu yếu phẩm</item>

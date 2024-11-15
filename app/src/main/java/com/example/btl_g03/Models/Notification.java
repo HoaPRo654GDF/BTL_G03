@@ -7,15 +7,19 @@ public class Notification {
     private String userId; // Người nhận thông báo
     private String content;
     private Date createdDate;
+    private String postId;
+    private String requestId;
 
     public Notification() {
     }
 
-    public Notification(String notificationId, String userId, String content, Date createdDate) {
+    public Notification(String notificationId, String userId, String content, Date createdDate,String postId,String requestId) {
         this.notificationId = notificationId;
         this.userId = userId;
         this.content = content;
         this.createdDate = createdDate;
+        this.postId = postId;
+        this.requestId = requestId;
     }
 
     public String getNotificationId() {
@@ -48,5 +52,19 @@ public class Notification {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
+    }
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 }
