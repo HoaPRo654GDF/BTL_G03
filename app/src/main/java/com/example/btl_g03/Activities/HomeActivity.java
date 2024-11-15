@@ -59,7 +59,7 @@ public class HomeActivity extends AppCompatActivity {
                 selectedFragment = new HomeFragment();
             }else if (menuItem.getItemId() == R.id.action_location) {
                 selectedFragment = new MapFragment();
-            }else if (menuItem.getItemId() == R.id.action_Message) {
+            }else if (menuItem.getItemId() == R.id.action_Notification) {
                 selectedFragment = new NotificationFragment();
             }
 

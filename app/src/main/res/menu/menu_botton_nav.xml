@@ -12,7 +12,7 @@
         android:title="@string/action_location"
         android:icon="@drawable/ic_location"/>
 
-    <item android:id="@+id/action_Message"
+    <item android:id="@+id/action_Notification"
         android:title="@string/action_Message"
         android:icon="@drawable/ic_progress"/>
 
