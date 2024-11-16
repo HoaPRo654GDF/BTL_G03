@@ -18,6 +18,7 @@ import com.example.btl_g03.Models.Post;
 import com.example.btl_g03.Models.Request;
 import com.example.btl_g03.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
@@ -38,6 +39,7 @@ public class PostDetailActivity extends AppCompatActivity {
     private String currentUserId ;
     private Button btnConfirmRequest;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +53,8 @@ public class PostDetailActivity extends AppCompatActivity {
             finish();  // Đóng màn hình hiện tại
             return;  // Dừng các hoạt động còn lại của onCreate()
         }
+
+
 
 
         // Khởi tạo các view
@@ -199,7 +203,10 @@ public class PostDetailActivity extends AppCompatActivity {
 
                     // Tạo ID thông báo và nội dung thông báo
                     String notificationId = UUID.randomUUID().toString();
-                    String content = "Có một yêu cầu nhận sản phẩm mới cho bài đăng của bạn. Vui lòng xác nhận.";
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    String currentUserEmail = user.getEmail();
+                    String content = "Có một yêu cầu nhận sản phẩm mới cho bài đăng của bạn từ " + currentUserEmail + ". Vui lòng xác nhận.";
+
                     Date createdDate = new Date();
 
                     // Chuyển đổi ngày giờ thành timestamp
@@ -214,7 +221,7 @@ public class PostDetailActivity extends AppCompatActivity {
                             .addOnCompleteListener(task1 -> {
                                 if (task1.isSuccessful()) {
                                     // Thông báo đã được gửi thành công
-                                    Toast.makeText(PostDetailActivity.this, "Thông báo đã được gửi cho người bán.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PostDetailActivity.this, "Thông báo đã được gửi cho người đăng.", Toast.LENGTH_SHORT).show();
                                 } else {
                                     // Xử lý lỗi khi gửi thông báo
                                     Toast.makeText(PostDetailActivity.this, "Lỗi khi gửi thông báo.", Toast.LENGTH_SHORT).show();
@@ -243,7 +250,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     if (receiverId != null && !receiverId.isEmpty()) {
                         // Tạo thông báo cho người nhận
                         String notificationId = UUID.randomUUID().toString();
-                        String content = "Bạn đã nhận yêu cầu nhận sản phẩm từ người đăng. Xác nhận để nhận.";
+                        String content = "Bạn đã nhận yêu cầu xác nhận sản phẩm từ người đăng, hãy đến vị trí của người đăng để nhận";
                         Date createdDate = new Date();
 
                         // Tạo đối tượng Notification

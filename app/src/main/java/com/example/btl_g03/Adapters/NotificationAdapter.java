@@ -44,10 +44,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         String userId = notification.getUserId();
         if (requestId != null && requestId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             // Thông báo cho người bán
-            holder.notificationContent.setText("Thông báo cho người bán: " + notification.getContent());
+            holder.notificationContent.setText( notification.getContent());
         } else if (userId != null && userId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             // Thông báo cho người nhận
-            holder.notificationContent.setText("Thông báo cho người nhận: " + notification.getContent());
+            holder.notificationContent.setText( notification.getContent());
         }
 
         // Thêm sự kiện click

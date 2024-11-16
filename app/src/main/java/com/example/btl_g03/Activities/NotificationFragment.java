@@ -31,7 +31,7 @@ public class NotificationFragment extends Fragment {
     private List<Notification> notificationList;
 
     public NotificationFragment() {
-        // Required empty public constructor
+
     }
 
     @Override

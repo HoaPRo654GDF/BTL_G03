@@ -9,4 +9,5 @@
         <item>Chia sẻ nhu yếu phẩm</item>
         <item>Xin nhận nhu yếu phẩm</item>
     </string-array>
+    <string name="request_notification">Có một yêu cầu nhận sản phẩm mới cho bài đăng của bạn từ %1$s. Vui lòng xác nhận.</string>
 </resources>

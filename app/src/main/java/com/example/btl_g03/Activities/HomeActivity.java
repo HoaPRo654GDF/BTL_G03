@@ -134,7 +134,7 @@ public class HomeActivity extends AppCompatActivity {
                                         .transform(new CircleCrop())
                                         .into(ImUserProfile); // profileImageView là ImageView bạn muốn hiển thị ảnh
                             } else {
-                                // Nếu không có ảnh, bạn có thể set một ảnh mặc định hoặc không làm gì cả
+
                                 ImUserProfile.setImageResource(R.drawable.defaul_image); // Ví dụ ảnh mặc định
                             }
 
