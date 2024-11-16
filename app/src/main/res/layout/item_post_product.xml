@@ -46,7 +46,7 @@
                 android:id="@+id/edt_post_title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Title"
+                android:hint="Tiêu đề"
                 android:textSize="20sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -61,7 +61,7 @@
                 android:id="@+id/edt_post_description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Description"
+                android:hint="Mô tả"
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -75,7 +75,7 @@
                 android:id="@+id/edt_post_category"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Category"
+                android:hint="Danh mục"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -99,7 +99,7 @@
                 android:id="@+id/edt_post_date"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Post Date"
+                android:hint="Ngày đăng"
                 android:textSize="12sp"
                 android:textColor="@android:color/darker_gray"
                 android:enabled="true" />
@@ -135,13 +135,13 @@
                 android:layout_height="wrap_content"
                 android:text="Huy"
                 android:textColor="@android:color/holo_red_dark"/>
-            <Button
-                android:id="@+id/btn_select_location"
-                android:layout_width="129dp"
-                android:layout_height="wrap_content"
-                android:text="Chọn vị trí"
-                android:textColor="@android:color/black"
-                />
+<!--            <Button-->
+<!--                android:id="@+id/btn_select_location"-->
+<!--                android:layout_width="129dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Chọn vị trí"-->
+<!--                android:textColor="@android:color/black"-->
+<!--                />-->
 
             <Button
                 android:id="@+id/btn_them"

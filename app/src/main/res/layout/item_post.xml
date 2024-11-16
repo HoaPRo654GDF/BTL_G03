@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="bottom|start">
+            android:gravity="bottom">
 
             <TextView
                 android:id="@+id/tv_post_title"
@@ -46,8 +46,18 @@
                 android:background="@drawable/nen_xanh_la"
                 android:textColor="@color/black"
                 android:text="Xem Chi Tiết"
-                android:layout_gravity="bottom|start"
-                android:layout_marginTop="10dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="10dp"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/btn_delete_post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/nen_xanh_la"
+                android:textColor="@color/black"
+                android:text="Xóa"
+                android:layout_gravity="center_vertical"
                 app:backgroundTint="@null" />
         </LinearLayout>
 

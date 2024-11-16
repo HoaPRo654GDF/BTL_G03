@@ -301,6 +301,7 @@
                                 if (currentUserId.equals(post.getUserId())) {
                                     // Ẩn nút yêu cầu nếu là người đăng bài
                                     btnRequestItem.setVisibility(View.GONE);
+
                                 } else {
                                     // Hiển thị nút yêu cầu nếu không phải là người đăng bài
                                     btnRequestItem.setVisibility(View.VISIBLE);
