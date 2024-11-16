@@ -49,6 +49,26 @@ public class HomeActivity extends AppCompatActivity {
 
         loadFragment(new HomeFragment());
 
+        String postId = getIntent().getStringExtra("postId");
+
+        if (postId != null) {
+            // Chuyển đến MapFragment và truyền postId
+            Bundle bundle = new Bundle();
+            bundle.putString("postId", postId);
+
+            // Khởi tạo MapFragment
+            PostLocationFragment  postLocationFragment  = new PostLocationFragment();
+            postLocationFragment.setArguments(bundle);  // Truyền dữ liệu vào Fragment
+
+            // Thực hiện FragmentTransaction để thay thế Fragment hiện tại bằng MapFragment
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, postLocationFragment)  // `R.id.fragment_container` là container chứa các Fragment trong layout của bạn
+                    .addToBackStack(null)  // Thêm vào back stack nếu bạn muốn người dùng có thể quay lại Fragment trước đó
+                    .commit();
+        } else {
+            Toast.makeText(HomeActivity.this, "Post ID is missing", Toast.LENGTH_SHORT).show();
+        }
+
         bottomNavigationView = findViewById(R.id.bottom_nav);
         // Xử lý chuyển fragment khi click biểu tượng tương ứng trên bottom menu
         bottomNavigationView.setSelectedItemId(R.id.action_home);
@@ -131,6 +151,7 @@ public class HomeActivity extends AppCompatActivity {
                             if (imgUrl != null && !imgUrl.isEmpty()) {
                                 Glide.with(HomeActivity.this)
                                         .load(imgUrl)// URL ảnh
+                                        .placeholder(R.drawable.ic_user)
                                         .transform(new CircleCrop())
                                         .into(ImUserProfile); // profileImageView là ImageView bạn muốn hiển thị ảnh
                             } else {

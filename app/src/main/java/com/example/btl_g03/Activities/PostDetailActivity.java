@@ -34,7 +34,7 @@
 
     public class PostDetailActivity extends AppCompatActivity {
         private TextView tvTitle, tvDescription, tvCategory, tvPostDate, tvStatus,tvSellerEmail,tvPostType;
-        private ImageView imgPost;
+        private ImageView imgPost,ivlocationicon;
         private Button btnRequestItem;
         private String currentUserId ;
         private Button btnConfirmRequest;
@@ -68,6 +68,7 @@
             imgPost = findViewById(R.id.img_post_detail_image);
             btnRequestItem = findViewById(R.id.btn_request_item);
             btnConfirmRequest = findViewById(R.id.btn_confirm_request);
+            ivlocationicon = findViewById(R.id.iv_location_icon);
 
             String fromNotification = getIntent().getStringExtra("fromNotification");
 
@@ -77,7 +78,23 @@
                 });
             } else {
                 btnConfirmRequest.setVisibility(View.GONE);
+
             }
+
+            ivlocationicon.setOnClickListener(view -> {
+                // Lấy postId từ Intent
+                String postId = getIntent().getStringExtra("postId");
+
+                if (postId != null) {
+                    // Tạo Intent để chuyển đến HomeActivity
+                    Intent intent = new Intent(PostDetailActivity.this, HomeActivity.class);
+                    intent.putExtra("postId", postId);  // Truyền postId vào HomeActivity
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(PostDetailActivity.this, "Post ID is missing", Toast.LENGTH_SHORT).show();
+                }
+            });
+
 
             findViewById(R.id.btn_logout).setOnClickListener(view -> {
                 // Chuyển sang Activity khác (HomeActivity)
@@ -86,18 +103,10 @@
                 finish();  // Đóng Activity hiện tại nếu cần
             });
 
+
             btnRequestItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Ensure postId is available here
-    //                String postId = getIntent().getStringExtra("postId");
-    //                if (postId != null && !postId.isEmpty()) {
-    //                    sendNotificationToSeller(postId);  // Call sendNotificationToSeller with postId
-    //                } else {
-    //                    Toast.makeText(PostDetailActivity.this, "Post ID is missing", Toast.LENGTH_SHORT).show();
-    //                }
-
-                    // Show the request dialog
                     showRequestDialog();
                 }
             });
@@ -113,6 +122,7 @@
 
         }
 
+        //người đăng xác nhận cho người nhận
         private void confirmRequest() {
             String postId = getIntent().getStringExtra("postId");
             String requestId = getIntent().getStringExtra("requestId");
@@ -123,6 +133,17 @@
                             if (task.isSuccessful()) {
                                 Toast.makeText(PostDetailActivity.this, "Yêu cầu đã được xác nhận.", Toast.LENGTH_SHORT).show();
                                 btnConfirmRequest.setVisibility(View.GONE);  // Ẩn nút sau khi xác nhận
+                                FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                                DocumentReference postRefFirestore = firestore.collection("product").document(postId);
+
+                                postRefFirestore.update("available", false)  // Đặt trạng thái là hết hàng
+                                        .addOnSuccessListener(aVoid -> {
+
+                                            Toast.makeText(PostDetailActivity.this, "Trạng thái bài đăng đã được cập nhật thành 'Hết hàng'.", Toast.LENGTH_SHORT).show();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(PostDetailActivity.this, "Lỗi khi cập nhật trạng thái bài đăng trong Firestore.", Toast.LENGTH_SHORT).show();
+                                        });
                                 sendNotificationToReceiver(postId, requestId);
                             } else {
                                 Toast.makeText(PostDetailActivity.this, "Lỗi khi xác nhận yêu cầu.", Toast.LENGTH_SHORT).show();
@@ -133,6 +154,25 @@
             }
         }
 
+        // Kiểm tra trạng thái 'available' của bài đăng và ẩn nút nếu bài đăng đã hết hàng
+        private void checkPostAvailability(String postId) {
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            DocumentReference postRef = firestore.collection("product").document(postId);
+
+            postRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    Boolean available = documentSnapshot.getBoolean("available");
+                    if (available != null && !available) {
+                        // Nếu bài đăng đã được đặt là 'Hết hàng', ẩn nút yêu cầu
+                        btnConfirmRequest.setVisibility(View.GONE);
+                    }
+                }
+            }).addOnFailureListener(e -> {
+                Toast.makeText(PostDetailActivity.this, "Lỗi khi kiểm tra trạng thái bài đăng.", Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        //Dialog khi người dùng chọn button nhận sản phẩm
         private void showRequestDialog() {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Yêu cầu nhận sản phẩm");
@@ -158,6 +198,7 @@
             builder.show();
         }
 
+        // Gửi yêu cầu đến người đăng
         private void sendRequest(String message) {
             // Lấy postId và requesterId từ dữ liệu bài đăng và người dùng hiện tại
             String postId = getIntent().getStringExtra("postId");
@@ -181,7 +222,7 @@
                 }
             });
         }
-
+        // Gửi thông báo từ người nhận đến người đăng
         private void sendNotificationToSeller(String postId,String requestId,String message) {
             // Lấy thông tin sellerId từ Firestore
             FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -235,6 +276,7 @@
                 }
             });
         }
+        //Gửi thông báo của người đăng tới người bán
         private void sendNotificationToReceiver(String postId, String requestId) {
             DatabaseReference requestRef = FirebaseDatabase.getInstance().getReference("requests").child(requestId);
 
@@ -282,11 +324,13 @@
             FirebaseFirestore firestore = FirebaseFirestore.getInstance();
             DocumentReference postRef = firestore.collection("product").document(postId);
 
+
             postRef.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
                         Post post = document.toObject(Post.class);
+
 
                         if (post != null) {
                             // Hiển thị các thông tin lên màn hình
@@ -297,17 +341,28 @@
                             tvStatus.setText(post.isAvailable() ? "Còn hàng" : "Hết hàng");
                             tvPostType.setText(post.getPostType().toString());
                             loadSellerEmail(post.getUserId());
+
+                            checkPostAvailability(postId);
+
+
+
                             if (currentUserId != null && post.getUserId() != null) {
                                 if (currentUserId.equals(post.getUserId())) {
                                     // Ẩn nút yêu cầu nếu là người đăng bài
                                     btnRequestItem.setVisibility(View.GONE);
-
                                 } else {
-                                    // Hiển thị nút yêu cầu nếu không phải là người đăng bài
-                                    btnRequestItem.setVisibility(View.VISIBLE);
+                                    // Nếu không phải người đăng bài, kiểm tra trạng thái của bài đăng
+                                    if (post.isAvailable()) {
+                                        // Nếu là "Còn hàng", hiển thị nút yêu cầu
+                                        btnRequestItem.setVisibility(View.VISIBLE);
+                                    } else {
+                                        // Nếu là "Hết hàng", ẩn nút yêu cầu, xác nhận
+                                        btnRequestItem.setVisibility(View.GONE);
+                                        btnConfirmRequest.setVisibility(View.GONE);
+                                    }
                                 }
                             } else {
-                                // Có thể thông báo người dùng chưa đăng nhập hoặc có vấn đề trong việc lấy thông tin người dùng
+                                // Nếu người dùng chưa đăng nhập hoặc có vấn đề khi lấy thông tin người dùng
                                 Toast.makeText(PostDetailActivity.this, "Lỗi khi xác nhận người dùng", Toast.LENGTH_SHORT).show();
                             }
 
@@ -316,6 +371,7 @@
                             if (imageUrl != null && !imageUrl.isEmpty()) {
                                 Glide.with(this)
                                         .load(imageUrl)
+                                        .placeholder(R.drawable.ic_image_post)
                                         .into(imgPost);
                             } else {
                                 imgPost.setImageResource(R.drawable.ic_image_post);  // Đặt hình ảnh mặc định nếu không có URL ảnh
@@ -331,6 +387,7 @@
                 }
             });
         }
+        //Load email người đăng bài
         private void loadSellerEmail(String userId) {
             // Truy vấn Firestore để lấy thông tin người bán dựa trên userId
             FirebaseFirestore firestore = FirebaseFirestore.getInstance();

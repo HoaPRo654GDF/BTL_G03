@@ -389,6 +389,7 @@ public class HomeFragment extends Fragment {
 
         // Tạo một đối tượng chứa thông tin title và vị trí
         Map<String, Object> postData = new HashMap<>();
+        postData.put("postId", postId);
         postData.put("title", title);
         postData.put("latitude", latitude);
         postData.put("longitude", longitude);

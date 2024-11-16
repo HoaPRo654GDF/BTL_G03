@@ -240,6 +240,7 @@ public class ProfileActivity extends AppCompatActivity {
                             if (imgUrl != null && !imgUrl.isEmpty()) {
                                 Glide.with(ProfileActivity.this)
                                         .load(imgUrl)// URL ảnh
+                                        .placeholder(R.drawable.defaul_image)
                                         .transform(new CircleCrop())
                                         .into(imgProfile); // profileImageView là ImageView bạn muốn hiển thị ảnh
                             } else {

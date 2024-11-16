@@ -9,23 +9,43 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="5dp">
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical">
 
+        <!-- Logout Button -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_logout"
-            android:layout_width="34dp"
-            android:layout_height="35dp"
-            android:layout_gravity="start|top"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
             android:background="@drawable/nen_da_cam"
             android:drawableStart="@drawable/ic_back"
+            android:contentDescription="Logout"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <!-- Spacer View -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Location Icon -->
+        <ImageView
+            android:id="@+id/iv_location_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_location"
+            android:contentDescription="Location Icon"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:tint="@android:color/holo_blue_light" />
     </LinearLayout>
+
     <ImageView
         android:id="@+id/img_post_detail_image"
         android:layout_width="match_parent"

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -34,6 +35,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
+
+
         // Khởi tạo và thiết lập bản đồ
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
@@ -51,8 +54,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         LatLng defaultLocation = new LatLng(21.028511, 105.804817); // Hà Nội
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12));
 
+
         // Tải các vị trí bài đăng từ Firebase
-        loadPostLocations();
+         loadPostLocations();
     }
 
     private void loadPostLocations() {
