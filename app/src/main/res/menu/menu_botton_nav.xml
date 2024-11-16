@@ -4,17 +4,17 @@
         android:title="@string/action_home"
         android:icon="@drawable/ic_home"/>
 
-    <item android:id="@+id/action_leaderboard"
-        android:title="@string/action_leaderboard"
-        android:icon="@drawable/ic_leaderboard"/>
+    <item android:id="@+id/action_Message"
+        android:title="@string/action_Message"
+        android:icon="@drawable/ic_message"/>
 
     <item android:id="@+id/action_location"
         android:title="@string/action_location"
         android:icon="@drawable/ic_location"/>
 
     <item android:id="@+id/action_Notification"
-        android:title="@string/action_Message"
-        android:icon="@drawable/ic_progress"/>
+        android:title="@string/action_Notification"
+        android:icon="@drawable/ic_notification"/>
 
     <item android:id="@+id/action_more"
         android:title="@string/action_more"

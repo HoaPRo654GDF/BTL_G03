@@ -290,6 +290,7 @@ public class HomeFragment extends Fragment {
             return null;
         }
     }
+
     private void ghiDulieu(View dialogView, AlertDialog alertDialog) {
         // Lưu dữ liệu như trước, thay vì gọi HomeActivity, sử dụng getContext() cho các thao tác cần thiết.
         String title = edt_post_title.getText().toString();

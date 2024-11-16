@@ -10,6 +10,8 @@ public class Notification {
     private String postId;
     private String requestId;
 
+
+
     public Notification() {
     }
 
@@ -67,4 +69,5 @@ public class Notification {
     public void setRequestId(String requestId) {
         this.requestId = requestId;
     }
+
 }

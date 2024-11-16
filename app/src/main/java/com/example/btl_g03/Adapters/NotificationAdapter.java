@@ -16,7 +16,9 @@ import com.example.btl_g03.R;
 import com.example.btl_g03.Activities.PostDetailActivity; // Hoạt động hiển thị bài đăng
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
 
@@ -40,6 +42,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Notification notification = notificationList.get(position);
         holder.notificationContent.setText(notification.getContent());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
+        String formattedDate = dateFormat.format(notification.getCreatedDate());
+
+        // Hiển thị ngày
+        holder.notificationTimestamp.setText(formattedDate);
+
         String requestId = notification.getRequestId();
         String userId = notification.getUserId();
         if (requestId != null && requestId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
@@ -49,6 +58,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             // Thông báo cho người nhận
             holder.notificationContent.setText( notification.getContent());
         }
+
 
         // Thêm sự kiện click
         holder.itemView.setOnClickListener(v -> {
@@ -81,11 +91,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView notificationContent;
+        TextView notificationContent,notificationTimestamp;
+
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             notificationContent = itemView.findViewById(R.id.notificationContent);
+            notificationTimestamp = itemView.findViewById(R.id.notificationTimestamp);
         }
     }
 }
