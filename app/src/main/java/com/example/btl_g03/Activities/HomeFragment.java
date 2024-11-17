@@ -221,23 +221,28 @@ public class HomeFragment extends Fragment {
         AlertDialog alertDialog = builder.create();
 
 
+        Spinner postTypeCategory = dialogView.findViewById(R.id.spinner_post_category);
         Spinner postTypeSpinner = dialogView.findViewById(R.id.spinner_post_type);
 
 // Tạo ArrayAdapter từ tài nguyên strings.xml
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.post_types, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getContext(),
+                R.array.post_category, android.R.layout.simple_spinner_item);
+
 
 // Thiết lập layout cho item dropdown
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 // Gán ArrayAdapter cho Spinner
         postTypeSpinner.setAdapter(adapter);
+        postTypeCategory.setAdapter(adapter2);
 
         // Tìm các view trong dialog
         btn_them = dialogView.findViewById(R.id.btn_them);
         btn_huy = dialogView.findViewById(R.id.btn_huy);
         edt_post_title = dialogView.findViewById(R.id.edt_post_title);
-        edt_post_category = dialogView.findViewById(R.id.edt_post_category);
+//        edt_post_category = dialogView.findViewById(R.id.edt_post_category);
         edt_post_date = dialogView.findViewById(R.id.edt_post_date);
         edt_post_description = dialogView.findViewById(R.id.edt_post_description);
 //        edt_post_status = dialogView.findViewById(R.id.edt_post_status);
@@ -294,7 +299,7 @@ public class HomeFragment extends Fragment {
     private void ghiDulieu(View dialogView, AlertDialog alertDialog) {
         // Lưu dữ liệu như trước, thay vì gọi HomeActivity, sử dụng getContext() cho các thao tác cần thiết.
         String title = edt_post_title.getText().toString();
-        String category = edt_post_category.getText().toString();
+//        String category = edt_post_category.getText().toString();
         String dateString = edt_post_date.getText().toString();
         String description = edt_post_description.getText().toString();
 //        String status = edt_post_status.getText().toString();
@@ -302,7 +307,12 @@ public class HomeFragment extends Fragment {
         Spinner postTypeSpinner = dialogView.findViewById(R.id.spinner_post_type);
         String postTypeString  = postTypeSpinner.getSelectedItem().toString();
 
+        Spinner postTypeCategory = dialogView.findViewById(R.id.spinner_post_category);
+        String postTypeString2  = postTypeCategory.getSelectedItem().toString();
+
         PostType postType = convertStringToPostType(postTypeString);
+
+
         boolean isAvailable = true;
 
         // Định dạng ngày mà bạn mong muốn (dd/MM/yyyy)
@@ -326,7 +336,7 @@ public class HomeFragment extends Fragment {
         }
 
         // Kiểm tra các trường thông tin có rỗng không
-        if (!title.isEmpty() && !category.isEmpty() && date != null && !description.isEmpty() ) {
+        if (!title.isEmpty() && postTypeString2 != null  && date != null && !description.isEmpty() ) {
             double latitude = 0.0;
             double longitude = 0.0;
 
@@ -354,14 +364,14 @@ public class HomeFragment extends Fragment {
 
                 // Lưu sản phẩm vào SQLite
                 DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-                dbHelper.addProduct(title, description, category, imagePath); // Lưu vào SQLite
+                dbHelper.addProduct(title, description, postTypeString2, imagePath); // Lưu vào SQLite
 
                 // Tạo tham chiếu đến Firestore để lưu thông tin sản phẩm (chỉ thông tin không bao gồm ảnh)
                 DocumentReference postRef = firestore.collection("product").document();
                 String postId = postRef.getId(); // Lấy ID tự động của tài liệu
 
                 // Tạo đối tượng Post và lưu vào Firestore
-                Post post = new Post(postId, userId, title, description, category, imagePath, finalDate, isAvailable, postType,latitude, longitude);
+                Post post = new Post(postId, userId, title, description, postTypeString2, imagePath, finalDate, isAvailable, postType,latitude, longitude);
                 saveLocationAndTitleToRealtimeDatabase(postId, title, latitude, longitude);
                 postRef.set(post)
                         .addOnSuccessListener(aVoid -> {

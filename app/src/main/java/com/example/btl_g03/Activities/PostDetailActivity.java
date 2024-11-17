@@ -91,7 +91,7 @@
                     intent.putExtra("postId", postId);  // Truyền postId vào HomeActivity
                     startActivity(intent);
                 } else {
-                    Toast.makeText(PostDetailActivity.this, "Post ID is missing", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(PostDetailActivity.this, "Post ID is missing", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -117,7 +117,7 @@
             if (postId != null && !postId.isEmpty()) {
                 loadPostDetail(postId);
             } else {
-                Toast.makeText(this, "Post ID is missing", Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(this, "Post ID is missing", Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -139,7 +139,7 @@
                                 postRefFirestore.update("available", false)  // Đặt trạng thái là hết hàng
                                         .addOnSuccessListener(aVoid -> {
 
-                                            Toast.makeText(PostDetailActivity.this, "Trạng thái bài đăng đã được cập nhật thành 'Hết hàng'.", Toast.LENGTH_SHORT).show();
+                                           // Toast.makeText(PostDetailActivity.this, "Trạng thái bài đăng đã được cập nhật thành 'Hết hàng'.", Toast.LENGTH_SHORT).show();
                                         })
                                         .addOnFailureListener(e -> {
                                             Toast.makeText(PostDetailActivity.this, "Lỗi khi cập nhật trạng thái bài đăng trong Firestore.", Toast.LENGTH_SHORT).show();

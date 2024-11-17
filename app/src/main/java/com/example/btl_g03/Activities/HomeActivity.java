@@ -66,7 +66,7 @@ public class HomeActivity extends AppCompatActivity {
                     .addToBackStack(null)  // Thêm vào back stack nếu bạn muốn người dùng có thể quay lại Fragment trước đó
                     .commit();
         } else {
-            Toast.makeText(HomeActivity.this, "Post ID is missing", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(HomeActivity.this, "Post ID is missing", Toast.LENGTH_SHORT).show();
         }
 
         bottomNavigationView = findViewById(R.id.bottom_nav);

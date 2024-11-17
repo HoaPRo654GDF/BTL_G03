@@ -10,4 +10,15 @@
         <item>Xin nhận nhu yếu phẩm</item>
     </string-array>
     <string name="request_notification">Có một yêu cầu nhận sản phẩm mới cho bài đăng của bạn từ %1$s. Vui lòng xác nhận.</string>
+
+    <string-array name="post_category">
+        <item>Thực phẩm</item>
+        <item>Đồ uống</item>
+        <item>Đồ dùng sinh hoạt</item>
+        <item>Quần áo và đồ bảo hộ</item>
+        <item>Đồ dùng y tế</item>
+        <item>Dành cho trẻ em</item>
+        <item>Đồ học tập</item>
+        <item>Đồ khác</item>
+    </string-array>
 </resources>

@@ -70,14 +70,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edt_post_category"
+            <Spinner
+                android:id="@+id/spinner_post_category"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Danh mục"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray" />
+                android:entries="@array/post_category"/>
+<!--            <com.google.android.material.textfield.TextInputEditText-->
+<!--                android:id="@+id/edt_post_category"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:hint="Danh mục"-->
+<!--                android:textSize="14sp"-->
+<!--                android:textColor="@android:color/darker_gray" />-->
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Image (with default image as placeholder) -->
