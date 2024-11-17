@@ -87,6 +87,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private void deletePost(String postId, int position) {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         DatabaseReference notificationsRef = FirebaseDatabase.getInstance().getReference("notifications");
+        DatabaseReference notificationsRef2 = FirebaseDatabase.getInstance().getReference("posts");
 
         // Xóa bài đăng từ Firestore
         firestore.collection("product").document(postId)
@@ -102,11 +103,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                         snapshot.getRef().removeValue()
                                                 .addOnSuccessListener(aVoid1 -> {
                                                     // Thông báo thành công khi xóa thông báo
-                                                    Toast.makeText(context, "Xóa thông báo thành công", Toast.LENGTH_SHORT).show();
+                                                    //Toast.makeText(context, "Xóa thông báo thành công", Toast.LENGTH_SHORT).show();
                                                 })
                                                 .addOnFailureListener(e -> {
                                                     // Thêm thông báo lỗi khi không xóa được thông báo
-                                                    Toast.makeText(context, "Không thể xóa thông báo: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    //Toast.makeText(context, "Không thể xóa thông báo: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 });
                                     }
                                 }
@@ -116,6 +117,31 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                                     Log.w("DeletePost", "deletePost:onCancelled", databaseError.toException());
                                 }
                             });
+                    // Xóa bài đăng thành công, giờ xóa vị trí trong Realtime Database
+                    notificationsRef2.orderByChild("postId").equalTo(postId)
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        // Xóa vị trí có postId tương ứng
+                                        snapshot.getRef().removeValue()
+                                                .addOnSuccessListener(aVoid1 -> {
+                                                    // Thông báo thành công khi xóa thông báo
+                                                    //Toast.makeText(context, "Xóa thông báo thành công", Toast.LENGTH_SHORT).show();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    // Thêm thông báo lỗi khi không xóa được thông báo
+                                                    //Toast.makeText(context, "Không thể xóa thông báo: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Log.w("DeletePost", "deletePost:onCancelled", databaseError.toException());
+                                }
+                            });
+
 
                     // Xóa bài đăng khỏi danh sách
                     postList.remove(position);
