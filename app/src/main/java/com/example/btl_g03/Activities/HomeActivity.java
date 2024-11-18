@@ -45,6 +45,7 @@ public class HomeActivity extends AppCompatActivity {
     private String userId ;
     private ImageView ImUserProfile;
     BottomNavigationView bottomNavigationView;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     //Khởi tạo activity
     @Override
@@ -73,6 +74,7 @@ public class HomeActivity extends AppCompatActivity {
         } else {
 //            Toast.makeText(HomeActivity.this, "Post ID is missing", Toast.LENGTH_SHORT).show();
         }
+
 
         bottomNavigationView = findViewById(R.id.bottom_nav);
         // Xử lý chuyển fragment khi click biểu tượng tương ứng trên bottom menu
@@ -173,15 +175,27 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
     }
-    private boolean checkPermissions() {
-        int locationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        return locationPermission == PackageManager.PERMISSION_GRANTED ;
-    }
+
 
     private void requestPermissions() {
-        if (!checkPermissions()) {
+        // Kiểm tra xem quyền truy cập vị trí đã được cấp chưa
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Nếu chưa, yêu cầu cấp quyền
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                loadFragment(new MapFragment()); // Quyền đã được cấp, tải MapFragment
+            } else {
+                Toast.makeText(this, "Cần quyền truy cập vị trí để sử dụng tính năng này", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
