@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -45,8 +46,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -83,6 +88,9 @@ public class HomeFragment extends Fragment {
     private Uri selectedImageUri;
     private Calendar calendar;
     private String userId ;
+    private Spinner spinnerPostTypes, spinnerPostCategory;
+    private List<Post> postList = new ArrayList<>();
+    private DatabaseReference databaseReference;
 
 
     @Override
@@ -105,6 +113,27 @@ public class HomeFragment extends Fragment {
         postAdapter = new PostAdapter(postlist, requireContext(),userId);
         recyclerView.setAdapter(postAdapter);
 
+        // Ánh xạ Spinner
+        spinnerPostTypes = view.findViewById(R.id.spinner_type);
+        spinnerPostCategory = view.findViewById(R.id.spinner_category);
+
+        // Thiết lập adapter cho Spinner
+        ArrayAdapter<CharSequence> typesAdapter = ArrayAdapter.createFromResource(
+                getContext(), R.array.post_types, android.R.layout.simple_spinner_item);
+        typesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPostTypes.setAdapter(typesAdapter);
+
+        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
+                getContext(), R.array.post_category, android.R.layout.simple_spinner_item);
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPostCategory.setAdapter(categoryAdapter);
+
+        // Lắng nghe sự thay đổi của Spinner
+        spinnerPostTypes.setOnItemSelectedListener(new FilterListener());
+        spinnerPostCategory.setOnItemSelectedListener(new FilterListener());
+
+        // Firebase reference
+        databaseReference = FirebaseDatabase.getInstance().getReference("product");
 
 
         docDulieu();
@@ -113,6 +142,47 @@ public class HomeFragment extends Fragment {
         btn_add.setOnClickListener(v -> showAddOrUpdateDialog());
 
         return view;
+    }
+
+    private void filterPosts(String type, String category) {
+        Query query = databaseReference;
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                postList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Post post = dataSnapshot.getValue(Post.class);
+
+                    // Lọc dữ liệu theo type và category ở phía client
+                    if ((type.equals("Tất cả") || post.getPostType().equals(type)) &&
+                            (category.equals("Tất cả") || post.getCategory().equals(category))) {
+                        postlist.add(post);
+                    }
+                }
+                postAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Xử lý lỗi
+            }
+        });
+    }
+
+    private class FilterListener implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String selectedType = spinnerPostTypes.getSelectedItem().toString();
+            String selectedCategory = spinnerPostCategory.getSelectedItem().toString();
+
+            filterPosts(selectedType, selectedCategory);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            // Không làm gì cả
+        }
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

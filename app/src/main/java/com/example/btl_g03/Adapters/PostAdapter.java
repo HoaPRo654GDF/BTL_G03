@@ -154,6 +154,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 });
     }
 
+//    public void updatePostList(List<Post> newPostList) {
+//        this.postList = newPostList;
+//        notifyDataSetChanged(); // Cập nhật lại RecyclerView
+//    }
+
 
 
     @Override
