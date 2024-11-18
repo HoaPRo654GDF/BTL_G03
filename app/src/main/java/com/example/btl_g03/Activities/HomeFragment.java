@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -43,12 +44,18 @@ import com.example.btl_g03.Models.PostType;
 import com.example.btl_g03.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.File;
@@ -83,12 +90,15 @@ public class HomeFragment extends Fragment {
     private Uri selectedImageUri;
     private Calendar calendar;
     private String userId ;
+    private Spinner spinnerPostTypes, spinnerPostCategory;
+
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        FirebaseApp.initializeApp(getContext());
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
@@ -105,7 +115,30 @@ public class HomeFragment extends Fragment {
         postAdapter = new PostAdapter(postlist, requireContext(),userId);
         recyclerView.setAdapter(postAdapter);
 
+// xử lý lọc
+        // Thiết lập spinners
+        spinnerPostTypes = view.findViewById(R.id.spinner_type);
+        spinnerPostCategory = view.findViewById(R.id.spinner_category);
 
+        ArrayAdapter<CharSequence> typesAdapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.post1_type,
+                android.R.layout.simple_spinner_item
+        );
+        typesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPostTypes.setAdapter(typesAdapter);
+
+        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.post1_category,
+                android.R.layout.simple_spinner_item
+        );
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPostCategory.setAdapter(categoryAdapter);
+
+        // Thiết lập listeners
+        spinnerPostTypes.setOnItemSelectedListener(new FilterListener());
+        spinnerPostCategory.setOnItemSelectedListener(new FilterListener());
 
         docDulieu();
 
@@ -113,6 +146,71 @@ public class HomeFragment extends Fragment {
         btn_add.setOnClickListener(v -> showAddOrUpdateDialog());
 
         return view;
+    }
+
+    // xử lý lọc
+    private void filterPosts(String type, String category) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference productRef = firestore.collection("product");
+        Query query = productRef;
+
+        Log.d("FilterPosts", "Filtering - Type: " + type + ", Category: " + category); // Debug log
+
+        if (!type.equals("Tất cả")) {
+            PostType postType;
+            if (type.equals("Chia sẻ nhu yếu phẩm")) {
+                postType = PostType.SHARE;
+            } else if (type.equals("Xin nhận nhu yếu phẩm")) {
+                postType = PostType.REQUEST;
+            } else {
+                postType = null;
+            }
+            if (postType != null) {
+                query = query.whereEqualTo("postType", postType);
+            }
+        }
+
+        if (!category.equals("Tất cả")) {
+            query = query.whereEqualTo("category", category);
+        }
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                postlist.clear();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Post post = document.toObject(Post.class);
+                    Log.d("FilterPosts", "Found post: " + post.getTitle() +
+                            " Type: " + post.getPostType() +
+                            " Category: " + post.getCategory()); // Debug log
+                    postlist.add(post);
+                }
+                Log.d("FilterPosts", "Total posts after filter: " + postlist.size()); // Debug log
+                postAdapter.notifyDataSetChanged();
+            } else {
+                Log.e("FilterPosts", "Error getting documents: ", task.getException());
+            }
+        });
+    }
+
+
+
+// xử lý lọc
+    private class FilterListener implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            String selectedType = spinnerPostTypes.getSelectedItem().toString();
+            String selectedCategory = spinnerPostCategory.getSelectedItem().toString();
+
+            Log.d("FilterListener", "Selected Type: " + selectedType); // Debug log
+            Log.d("FilterListener", "Selected Category: " + selectedCategory); // Debug log
+
+            filterPosts(selectedType, selectedCategory);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            // Không làm gì
+        }
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

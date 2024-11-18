@@ -2,9 +2,12 @@ package com.example.btl_g03.Activities;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 
@@ -13,6 +16,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -40,6 +45,7 @@ public class HomeActivity extends AppCompatActivity {
     private String userId ;
     private ImageView ImUserProfile;
     BottomNavigationView bottomNavigationView;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     //Khởi tạo activity
     @Override
@@ -69,6 +75,7 @@ public class HomeActivity extends AppCompatActivity {
 //            Toast.makeText(HomeActivity.this, "Post ID is missing", Toast.LENGTH_SHORT).show();
         }
 
+
         bottomNavigationView = findViewById(R.id.bottom_nav);
         // Xử lý chuyển fragment khi click biểu tượng tương ứng trên bottom menu
         bottomNavigationView.setSelectedItemId(R.id.action_home);
@@ -78,6 +85,7 @@ public class HomeActivity extends AppCompatActivity {
             if (menuItem.getItemId() == R.id.action_home) {
                 selectedFragment = new HomeFragment();
             }else if (menuItem.getItemId() == R.id.action_location) {
+                requestPermissions();
                 selectedFragment = new MapFragment();
             }else if (menuItem.getItemId() == R.id.action_Notification) {
                 selectedFragment = new NotificationFragment();
@@ -166,6 +174,29 @@ public class HomeActivity extends AppCompatActivity {
                         Toast.makeText(HomeActivity.this, "Không tải được dữ liệu người dùng", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+
+    private void requestPermissions() {
+        // Kiểm tra xem quyền truy cập vị trí đã được cấp chưa
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Nếu chưa, yêu cầu cấp quyền
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                loadFragment(new MapFragment()); // Quyền đã được cấp, tải MapFragment
+            } else {
+                Toast.makeText(this, "Cần quyền truy cập vị trí để sử dụng tính năng này", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }
