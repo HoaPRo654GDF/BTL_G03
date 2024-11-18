@@ -44,16 +44,18 @@ import com.example.btl_g03.Models.PostType;
 import com.example.btl_g03.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.File;
@@ -97,6 +99,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        FirebaseApp.initializeApp(getContext());
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
@@ -133,7 +136,7 @@ public class HomeFragment extends Fragment {
         spinnerPostCategory.setOnItemSelectedListener(new FilterListener());
 
         // Firebase reference
-        databaseReference = FirebaseDatabase.getInstance().getReference("product");
+//        databaseReference = FirebaseDatabase.getInstance().getReference("product");
 
 
         docDulieu();
@@ -145,30 +148,40 @@ public class HomeFragment extends Fragment {
     }
 
     private void filterPosts(String type, String category) {
-        Query query = databaseReference;
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference productRef = firestore.collection("product");
 
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                postList.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Post post = dataSnapshot.getValue(Post.class);
+        // Bắt đầu truy vấn từ productRef
+        Query query = productRef;
 
-                    // Lọc dữ liệu theo type và category ở phía client
-                    if ((type.equals("Tất cả") || post.getPostType().equals(type)) &&
-                            (category.equals("Tất cả") || post.getCategory().equals(category))) {
-                        postlist.add(post);
-                    }
+        // Lọc theo loại và danh mục
+        if (!type.equals("Tất cả")) {
+            query = query.whereEqualTo("postType", type);  // Thêm điều kiện lọc theo loại
+        }
+        if (!category.equals("Tất cả")) {
+            query = query.whereEqualTo("category", category);  // Thêm điều kiện lọc theo danh mục
+        }
+
+        // Thực hiện truy vấn
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                postList.clear();  // Xóa dữ liệu cũ
+
+                // Duyệt qua kết quả truy vấn
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Post post = document.toObject(Post.class);
+                    postList.add(post);  // Thêm bài đăng vào danh sách
                 }
-                postAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Xử lý lỗi
+                postAdapter.notifyDataSetChanged();  // Cập nhật RecyclerView
+            } else {
+                Log.d("FilterPosts", "Error getting documents: ", task.getException());
             }
         });
     }
+
+
+
 
     private class FilterListener implements AdapterView.OnItemSelectedListener {
         @Override
