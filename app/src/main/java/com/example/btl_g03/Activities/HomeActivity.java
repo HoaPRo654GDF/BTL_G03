@@ -85,8 +85,14 @@ public class HomeActivity extends AppCompatActivity {
             if (menuItem.getItemId() == R.id.action_home) {
                 selectedFragment = new HomeFragment();
             }else if (menuItem.getItemId() == R.id.action_location) {
-                requestPermissions();
-                selectedFragment = new MapFragment();
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // Nếu chưa có quyền, yêu cầu cấp quyền
+                    requestPermissions();
+                } else {
+                    // Nếu quyền đã được cấp, tải MapFragment
+                    selectedFragment = new MapFragment();
+                }
             }else if (menuItem.getItemId() == R.id.action_Notification) {
                 selectedFragment = new NotificationFragment();
             }
