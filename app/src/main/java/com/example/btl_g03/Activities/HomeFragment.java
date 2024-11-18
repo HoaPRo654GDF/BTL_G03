@@ -91,8 +91,7 @@ public class HomeFragment extends Fragment {
     private Calendar calendar;
     private String userId ;
     private Spinner spinnerPostTypes, spinnerPostCategory;
-    private List<Post> postList = new ArrayList<>();
-    private DatabaseReference databaseReference;
+  
 
 
     @Override
@@ -165,12 +164,12 @@ public class HomeFragment extends Fragment {
         // Thực hiện truy vấn
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                postList.clear();  // Xóa dữ liệu cũ
+                postlist.clear();  // Xóa dữ liệu cũ
 
                 // Duyệt qua kết quả truy vấn
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     Post post = document.toObject(Post.class);
-                    postList.add(post);  // Thêm bài đăng vào danh sách
+                    postlist.add(post);  // Thêm bài đăng vào danh sách
                 }
 
                 postAdapter.notifyDataSetChanged();  // Cập nhật RecyclerView
