@@ -2,9 +2,12 @@ package com.example.btl_g03.Activities;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 
@@ -13,6 +16,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -78,6 +83,7 @@ public class HomeActivity extends AppCompatActivity {
             if (menuItem.getItemId() == R.id.action_home) {
                 selectedFragment = new HomeFragment();
             }else if (menuItem.getItemId() == R.id.action_location) {
+                requestPermissions();
                 selectedFragment = new MapFragment();
             }else if (menuItem.getItemId() == R.id.action_Notification) {
                 selectedFragment = new NotificationFragment();
@@ -166,6 +172,17 @@ public class HomeActivity extends AppCompatActivity {
                         Toast.makeText(HomeActivity.this, "Không tải được dữ liệu người dùng", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+    private boolean checkPermissions() {
+        int locationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        return locationPermission == PackageManager.PERMISSION_GRANTED ;
+    }
+
+    private void requestPermissions() {
+        if (!checkPermissions()) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
+        }
     }
 
 }

@@ -115,6 +115,7 @@ public class HomeFragment extends Fragment {
         postAdapter = new PostAdapter(postlist, requireContext(),userId);
         recyclerView.setAdapter(postAdapter);
 
+// xử lý lọc
         // Thiết lập spinners
         spinnerPostTypes = view.findViewById(R.id.spinner_type);
         spinnerPostCategory = view.findViewById(R.id.spinner_category);
@@ -147,6 +148,7 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+    // xử lý lọc
     private void filterPosts(String type, String category) {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         CollectionReference productRef = firestore.collection("product");
@@ -192,7 +194,7 @@ public class HomeFragment extends Fragment {
 
 
 
-
+// xử lý lọc
     private class FilterListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
