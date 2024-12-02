@@ -5,6 +5,7 @@
     <string name="action_location">Location</string>
     <string name="action_Notification">Notification</string>
     <string name="action_more">More</string>
+    <string name="action_light_sensor">Cảm biến</string>
     <string-array name="post_types">
         <item>Chia sẻ nhu yếu phẩm</item>
         <item>Xin nhận nhu yếu phẩm</item>
