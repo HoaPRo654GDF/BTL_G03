@@ -125,6 +125,8 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
                     selectedFragment = new MapFragment();
             }else if (menuItem.getItemId() == R.id.action_Notification) {
                 selectedFragment = new NotificationFragment();
+            }else if (menuItem.getItemId() == R.id.action_light_sensor) {
+                selectedFragment = new LightSensorFragment();
             }
 
             if (selectedFragment != null) {

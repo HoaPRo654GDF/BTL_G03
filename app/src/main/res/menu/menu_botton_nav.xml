@@ -16,7 +16,8 @@
         android:title="@string/action_Notification"
         android:icon="@drawable/ic_notification"/>
 
-    <item android:id="@+id/action_more"
-        android:title="@string/action_more"
-        android:icon="@drawable/ic_more"/>
+    <item android:id="@+id/action_light_sensor"
+        android:title="Cảm biến"
+        android:icon="@drawable/ic_light_sensor"/>
+
 </menu>
