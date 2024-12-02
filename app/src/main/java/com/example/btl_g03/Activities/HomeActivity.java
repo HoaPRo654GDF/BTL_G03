@@ -13,9 +13,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 
+import android.provider.Settings;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -52,6 +56,9 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
     private TextView lightValueText;
     private FrameLayout topFrame;
 
+    private static final int PERMISSION_CODE = 1234;
+    private WindowManager.LayoutParams layoutParams;
+    private float currentBrightness = 1.0f;
     // Khai báo các biến
     private FirebaseFirestore firestore;
     private FirebaseAuth auth;
@@ -66,6 +73,8 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        layoutParams = getWindow().getAttributes();
+        checkBrightnessPermission();
         // Khởi tạo sensor
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
@@ -184,25 +193,77 @@ public class HomeActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    private void checkBrightnessPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.System.canWrite(getApplicationContext())) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, PERMISSION_CODE);
+            }
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Khôi phục độ sáng về mức mặc định
+        adjustScreenBrightness(1.0f);
+    }
+
+    private void adjustScreenBrightness(float brightness) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Settings.System.canWrite(getApplicationContext())) {
+                if (Math.abs(currentBrightness - brightness) > 0.1f) {
+                    currentBrightness = brightness;
+                    layoutParams.screenBrightness = brightness;
+                    getWindow().setAttributes(layoutParams);
+
+                    // Lưu giá trị độ sáng vào system settings
+                    int brightnessInt = (int) (brightness * 255);
+                    Settings.System.putInt(getContentResolver(),
+                            Settings.System.SCREEN_BRIGHTNESS, brightnessInt);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PERMISSION_CODE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.System.canWrite(getApplicationContext())) {
+                    Toast.makeText(this, "Đã được cấp quyền điều chỉnh độ sáng",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Chưa được cấp quyền điều chỉnh độ sáng",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
             float lightValue = event.values[0];
             lightValueText.setText(String.format("%.1f lux", lightValue));
 
-            // Thay đổi màu nền dựa trên độ sáng
-            if (lightValue < 10) { // Tối
+            if (lightValue < 10) { // Môi trường tối
+                adjustScreenBrightness(0.2f); // Giảm độ sáng xuống 20%
                 topFrame.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_purple));
                 lightValueText.setTextColor(ContextCompat.getColor(this, R.color.white));
             } else if (lightValue < 100) { // Ánh sáng yếu
+                adjustScreenBrightness(0.5f); // Độ sáng 50%
                 topFrame.setBackgroundColor(ContextCompat.getColor(this, R.color.medium_purple));
                 lightValueText.setTextColor(ContextCompat.getColor(this, R.color.black));
             } else { // Ánh sáng đủ
+                adjustScreenBrightness(1.0f); // Độ sáng tối đa
                 topFrame.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_200));
                 lightValueText.setTextColor(ContextCompat.getColor(this, R.color.black));
             }
         }
     }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
