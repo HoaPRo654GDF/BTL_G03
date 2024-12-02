@@ -4,14 +4,21 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 
 
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -38,7 +45,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements SensorEventListener {
+    // Các biến cho cảm biến ánh sáng
+    private SensorManager sensorManager;
+    private Sensor lightSensor;
+    private TextView lightValueText;
+    private FrameLayout topFrame;
+
     // Khai báo các biến
     private FirebaseFirestore firestore;
     private FirebaseAuth auth;
@@ -52,6 +65,20 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        // Khởi tạo sensor
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
+        // Ánh xạ view
+        lightValueText = findViewById(R.id.lightValue);
+        topFrame = findViewById(R.id.topFrame);
+
+        // Kiểm tra xem thiết bị có cảm biến ánh sáng không
+        if (lightSensor == null) {
+            Toast.makeText(this, "Thiết bị không có cảm biến ánh sáng!", Toast.LENGTH_SHORT).show();
+        }
+
 
         loadFragment(new HomeFragment());
 
@@ -139,6 +166,47 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (lightSensor != null) {
+            sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (lightSensor != null) {
+            sensorManager.unregisterListener(this);
+        }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+            float lightValue = event.values[0];
+            lightValueText.setText(String.format("%.1f lux", lightValue));
+
+            // Thay đổi màu nền dựa trên độ sáng
+            if (lightValue < 10) { // Tối
+                topFrame.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_purple));
+                lightValueText.setTextColor(ContextCompat.getColor(this, R.color.white));
+            } else if (lightValue < 100) { // Ánh sáng yếu
+                topFrame.setBackgroundColor(ContextCompat.getColor(this, R.color.medium_purple));
+                lightValueText.setTextColor(ContextCompat.getColor(this, R.color.black));
+            } else { // Ánh sáng đủ
+                topFrame.setBackgroundColor(ContextCompat.getColor(this, R.color.purple_200));
+                lightValueText.setTextColor(ContextCompat.getColor(this, R.color.black));
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Không cần xử lý gì khi độ chính xác thay đổi
     }
     private void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -175,6 +243,9 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+
 
 }
 

@@ -9,6 +9,7 @@
     tools:context=".Activities.HomeActivity">
 
     <FrameLayout
+        android:id="@+id/topFrame"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_gravity="top"
@@ -26,17 +27,32 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
-        <TextView
-            android:id="@+id/tvTitle"
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|top"
-            android:layout_marginTop="18dp"
-            android:text="CỘNG ĐỒNG CHIA SẺ"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/black" />
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:gravity="center">
 
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CỘNG ĐỒNG CHIA SẺ"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/lightValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0 lux"
+                android:textSize="12sp"
+                android:textColor="@color/black" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/imgUserProfile"
